@@ -4,7 +4,7 @@ import os
 import boto3
 import re  # 正規表現モジュールをインポート
 from botocore.exceptions import ClientError
-url='https://2ae0-34-125-223-137.ngrok-free.app/'
+url='https://2ae0-34-125-223-137.ngrok-free.app/generate'
 import urllib.request
 
 # Lambda コンテキストからリージョンを抽出する関数
