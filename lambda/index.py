@@ -81,10 +81,11 @@ def lambda_handler(event, context):
         
         print("Calling Bedrock invoke_model API with payload:", json.dumps(request_payload))
         headers = {
+            'accept': 'application/json',
             'Content-Type': 'application/json',
         }
         # invoke_model APIを呼び出し
-        response = urllib.request.Request(url, json.dumps(request_payload).encode(), headers)
+        response = urllib.request.Request(url, json.dumps(request_payload).encode('utf-8'), headers, method='POST')
         
         # レスポンスを解析
         response_body = json.loads(response['body'].read())
