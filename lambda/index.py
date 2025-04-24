@@ -88,7 +88,7 @@ def lambda_handler(event, context):
         response = urllib.request.Request(url, json.dumps(request_payload).encode('utf-8'), headers, method='POST')
         
         # レスポンスを解析
-        response_body = json.loads(response['body'].read())
+        response_body = json.loads(response["generated_text"].read())
         print("Bedrock response:", json.dumps(response_body, default=str))
         
         # 応答の検証
