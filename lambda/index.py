@@ -81,19 +81,8 @@ def lambda_handler(event, context):
         req = urllib.request.Request(url, json.dumps(request_payload).encode('utf-8'), headers, method='POST')
         with urllib.request.urlopen(req) as res:
             response_body = json.loads(res.read().decode('utf-8'))
-        # レスポンスを解析
-        
-        print("Bedrock response:", json.dumps(response_body, default=str))
         
         
-        # アシスタントの応答を取得
-        assistant_response = response_body[ "generated_text"]
-        
-        # アシスタントの応答を会話履歴に追加
-        messages.append({
-            "role": "assistant",
-            "content": assistant_response
-        })
         
         # 成功レスポンスの返却
         return {
@@ -106,7 +95,7 @@ def lambda_handler(event, context):
             },
             "body": json.dumps({
                 "success": True,
-                "response": assistant_response,
+                "response": response_body["response"],
                 "conversationHistory": messages
             })
         }
