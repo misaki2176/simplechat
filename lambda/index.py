@@ -53,7 +53,7 @@ def lambda_handler(event, context):
         # invoke_model用のリクエストペイロード
         request_payload = {
             "prompt": message,
-            "max_new_tokens": 512,
+            "max_new_tokens": 50,
             "do_sample": True,
             "temperature": 0.7,
             "top_p": 0.9
@@ -69,8 +69,9 @@ def lambda_handler(event, context):
         with urllib.request.urlopen(req) as res:
             response_body = json.loads(res.read().decode('utf-8'))
         
-        
-        
+        assistant_response = response_body["generated_text"]
+        conversation_history.append({"role": "user", "content": message})
+        conversation_history.append({"role": "assistant", "content": assistant_response})
         # 成功レスポンスの返却
         return {
             "statusCode": 200,
@@ -82,8 +83,8 @@ def lambda_handler(event, context):
             },
             "body": json.dumps({
                 "success": True,
-                "response": response_body["generated_text"],
-                "conversationHistory": messages
+                "response": assistant_response,
+                "conversationHistory":conversation_history
             })
         }
         
