@@ -4,7 +4,7 @@ import os
 import boto3
 import re  # 正規表現モジュールをインポート
 from botocore.exceptions import ClientError
-url='https://2ae0-34-125-223-137.ngrok-free.app/generate'
+url='https://422f-34-125-163-78.ngrok-free.app/generate'
 import urllib.request
 
 # Lambda コンテキストからリージョンを抽出する関数
@@ -23,14 +23,7 @@ MODEL_ID = os.environ.get("MODEL_ID", "us.amazon.nova-lite-v1:0")
 
 def lambda_handler(event, context):
     try:
-        # コンテキストから実行リージョンを取得し、クライアントを初期化
-        global bedrock_client
-        if bedrock_client is None:
-            region = extract_region_from_arn(context.invoked_function_arn)
-            bedrock_client = boto3.client('bedrock-runtime', region_name=region)
-            print(f"Initialized Bedrock client in region: {region}")
-        
-        print("Received event:", json.dumps(event))
+
         
         # Cognitoで認証されたユーザー情報を取得
         user_info = None
@@ -74,7 +67,7 @@ def lambda_handler(event, context):
         request_payload = {
             "prompt": message,
             "max_new_tokens": 512,
-            "do_sample": true,
+            "do_sample": True,
             "temperature": 0.7,
             "top_p": 0.9
         }
@@ -85,18 +78,16 @@ def lambda_handler(event, context):
             'Content-Type': 'application/json',
         }
         # invoke_model APIを呼び出し
-        response = urllib.request.Request(url, json.dumps(request_payload).encode('utf-8'), headers, method='POST')
-        
+        req = urllib.request.Request(url, json.dumps(request_payload).encode('utf-8'), headers, method='POST')
+        with urllib.request.urlopen(req) as res:
+            response_body = json.loads(res.read().decode('utf-8'))
         # レスポンスを解析
-        response_body = json.loads(response["generated_text"].read())
+        
         print("Bedrock response:", json.dumps(response_body, default=str))
         
-        # 応答の検証
-        if not response_body.get('output') or not response_body['output'].get('message') or not response_body['output']['message'].get('content'):
-            raise Exception("No response content from the model")
         
         # アシスタントの応答を取得
-        assistant_response = response_body['output']['message']['content'][0]['text']
+        assistant_response = response_body[ "generated_text"]
         
         # アシスタントの応答を会話履歴に追加
         messages.append({
