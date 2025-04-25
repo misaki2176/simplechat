@@ -95,7 +95,7 @@ def lambda_handler(event, context):
             },
             "body": json.dumps({
                 "success": True,
-                "response": response_body["response"],
+                "response": response_body["generated_text"],
                 "conversationHistory": messages
             })
         }
